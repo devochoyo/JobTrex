@@ -6,6 +6,11 @@ class UserRole(Enum):
     Employer = 'employer'
     APPLICANT = 'applicant'
     
+    
+class JobStatus(Enum):
+    PENDING = 'pending'
+    ACCEPTED = 'accepted'
+    REJECTED = 'rejected'
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -43,3 +48,5 @@ class Application(db.Model):
     applicant_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     job = db.relationship('Job', backref=db.backref('applications', lazy=True))
     applicant = db.relationship('User', backref=db.backref('applications', lazy=True))
+    status = db.Column(db.Enum(JobStatus), default=JobStatus.PENDING)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())

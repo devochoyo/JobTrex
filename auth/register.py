@@ -63,34 +63,34 @@ def applicant_reg(firstname, lastname, email, password, role, country,profile_pi
     
     hashed_password = generate_password_hash(password)
     
-    photo_path = f'uploads/profile/{profile_picture.filename}'
-    cv_path = f'uploads/cv/{cv.filename}'
     
     res = file_uploads(profile_picture, cv)
+    if res['status'] == True:
+        photo_path = res['profile_picture']
+        cv_path = res['cv']
     
-    if not res:
+        user = User(
+            firstname=firstname,
+            lastname=lastname,
+            email=email,
+            role=role,
+            country=country,
+            password=hashed_password,
+            profile_picture=photo_path,
+            cv=cv_path
+        )
+        db.session.add(user)
+        db.session.commit()
+    
         return jsonify({
-            "message": "Failed to upload"
-        }),500
-    
-    
-    user = User(
-        firstname=firstname,
-        lastname=lastname,
-        email=email,
-        role=role,
-        country=country,
-        password=hashed_password,
-        profile_picture=photo_path,
-        cv=cv_path
-    )
-    db.session.add(user)
-    db.session.commit()
+            "status": True,
+            'message': 'Registration successful!'
+            }), 201
     
     return jsonify({
-        "status": True,
-        'message': 'Registration successful!'
-        }), 201
+        "status": False,
+        'message': 'Registration failed!'
+        }), 500
     
 
 def employer_reg(firstname, lastname, email, password, role, country,profile_picture):
@@ -145,32 +145,38 @@ def employer_reg(firstname, lastname, email, password, role, country,profile_pic
     
     hashed_password = generate_password_hash(password)
     
-    photo_path = f'uploads/profile/{profile_picture.filename}'
-    
-    res = file_uploads(profile_picture)
-    
-    
-    if not res:
-        return jsonify({
-            "message": "Failed to upload"
-        }),500
 
     
-    user = User(
-        firstname=firstname,
-        lastname=lastname,
-        email=email,
-        role=role,
-        country=country,
-        password=hashed_password,
-        profile_picture=photo_path
-    )
+    res = file_uploads(profile_picture)
+    if res['status'] == True:
+        photo_path = res['profile_picture']
+        
+        user = User(
+            firstname=firstname,
+            lastname=lastname,
+            email=email,
+            role=role,
+            country=country,
+            password=hashed_password,
+            profile_picture=photo_path
+        )
     
-    db.session.add(user)
-    db.session.commit()
+        db.session.add(user)
+        db.session.commit()
     
+        return jsonify({
+            "status": True,
+            'message': 'Registration successful!'
+            }), 201
     return jsonify({
-        "status": True,
-        'message': 'Registration successful!'
-        }), 201
+        "status": False,
+        'message': 'Registration failed!'
+        }), 500
+
+    
+    
+    
+
+    
+
     

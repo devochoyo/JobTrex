@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
 from extension import db
-from route import register_bp, login_bp, logout_bp, refresh_bp
+from route import register_bp, login_bp, logout_bp, refresh_bp,health_bp
 from flask_migrate import Migrate
 
 
@@ -14,6 +14,7 @@ migrate = Migrate(app, db)
 
 app.json.sort_keys = False
 app.register_blueprint(register_bp)
+app.register_blueprint(health_bp)
 #app.register_blueprint(login_bp)
 #app.register_blueprint(logout_bp)
 #app.register_blueprint(refresh_bp)

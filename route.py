@@ -10,6 +10,11 @@ register_bp = Blueprint('register', __name__)
 login_bp = Blueprint('login', __name__)
 logout_bp = Blueprint('logout', __name__)
 refresh_bp = Blueprint('refresh', __name__)
+health_bp = Blueprint('health', __name__)
+
+@health_bp.route('/health', methods=['GET'])
+def health():
+    return jsonify({"message": "API is healthy"}), 200
 
 @register_bp.route('/api/v1/register', methods=['POST'])
 def register():

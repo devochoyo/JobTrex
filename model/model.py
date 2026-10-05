@@ -19,8 +19,7 @@ class User(db.Model):
     firstname = db.Column(db.String(100), nullable=False)
     lastname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(180), nullable=False, unique=True)
-    role = db.Enum(UserRole),
-    default = UserRole.APPLICANT
+    role = db.Column(db.Enum(UserRole), nullable=False)
     password = db.Column(db.Text, nullable=False)
     profile_picture = db.Column(db.String(255), nullable=True)
     cv = db.Column(db.String(255), nullable=True)
@@ -50,3 +49,9 @@ class Application(db.Model):
     applicant = db.relationship('User', backref=db.backref('applications', lazy=True))
     status = db.Column(db.Enum(JobStatus), default=JobStatus.PENDING)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+class Revoke(db.Model):
+    __tablename__ = 'revoke'
+        
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.Text, unique=True, nullable=False)

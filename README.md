@@ -26,3 +26,14 @@ Register as an employer
     "role": "employer",
     "country": "your country"
 }
+
+
+User Login
+
+/api/v1/login
+
+{
+  "email": "your email",
+  "password": "your password"
+}
+

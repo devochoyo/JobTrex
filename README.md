@@ -37,3 +37,16 @@ User Login
   "password": "your password"
 }
 
+
+User logout
+
+/api/v1/logout
+
+Authorization: Bearer #your refresh token
+
+
+Generating access token
+
+/api/v1/refresh
+
+Authorization: Bearer #your refresh token

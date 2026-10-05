@@ -16,7 +16,7 @@ app.register_blueprint(register_bp)
 app.register_blueprint(health_bp)
 app.register_blueprint(login_bp)
 app.register_blueprint(logout_bp)
-#app.register_blueprint(refresh_bp)
+app.register_blueprint(refresh_bp)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['UPLOAD_FOLDER'] =  'uploads'

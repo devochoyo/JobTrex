@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt,get_jwt_identity
 from auth.register import applicant_reg,employer_reg
 from auth.login import user_login
+from auth.refresh import refresh_token
 #from auth.login import login
 from auth.logout import user_logout
 #from auth.refresh import refresh
@@ -67,6 +68,7 @@ def login_route():
     res = user_login(u_email, u_password)
     return res
 
+
 @logout_bp.route("/api/v1/logout", methods=["POST"])
 @jwt_required(refresh=True)
 def logout():
@@ -75,5 +77,16 @@ def logout():
     jti = payload["jti"]
     res = user_logout(jti)
     return res
+
+
+@refresh_bp.route("/api/v1/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    
+    user_id = get_jwt_identity()
+    
+    res = refresh_token(user_id)
+    return res
+    
     
     

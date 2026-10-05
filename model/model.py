@@ -3,7 +3,7 @@ from enum import Enum
 
 class UserRole(Enum):
     ADMIN = 'admin'
-    Employer = 'employer'
+    EMPLOYER = 'employer'
     APPLICANT = 'applicant'
     
     
@@ -19,7 +19,11 @@ class User(db.Model):
     firstname = db.Column(db.String(100), nullable=False)
     lastname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(180), nullable=False, unique=True)
-    role = db.Column(db.Enum(UserRole), nullable=False)
+    role = db.Column(
+        db.Enum(
+            UserRole, 
+            name ="userrole", values_callable=lambda x: [e.value for e in x]), default=UserRole.APPLICANT
+        )
     password = db.Column(db.Text, nullable=False)
     profile_picture = db.Column(db.String(255), nullable=True)
     cv = db.Column(db.String(255), nullable=True)
@@ -47,7 +51,10 @@ class Application(db.Model):
     applicant_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     job = db.relationship('Job', backref=db.backref('applications', lazy=True))
     applicant = db.relationship('User', backref=db.backref('applications', lazy=True))
-    status = db.Column(db.Enum(JobStatus), default=JobStatus.PENDING)
+    status = db.Column(
+        db.Enum(
+            JobStatus, name="jobstatus", values_callable=lambda x: [e.value for e in x]),
+        default=JobStatus.PENDING)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
 class Revoke(db.Model):

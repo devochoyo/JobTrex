@@ -28,7 +28,9 @@ class User(db.Model):
     profile_picture = db.Column(db.String(255), nullable=True)
     cv = db.Column(db.String(255), nullable=True)
     country = db.Column(db.String(100), nullable=True)
+    is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
     
 class Job(db.Model):
     __tablename__ = 'jobs'
@@ -38,6 +40,7 @@ class Job(db.Model):
     description = db.Column(db.Text, nullable=False)
     location = db.Column(db.String(100), nullable=False)
     salary = db.Column(db.Float, nullable=True)
+    image = db.Column(db.Text, nullable=False)
     employer_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     employer = db.relationship('User', backref=db.backref('jobs', lazy=True))
     uploaded_at = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -62,3 +65,13 @@ class Revoke(db.Model):
         
     id = db.Column(db.Integer, primary_key=True)
     jti = db.Column(db.Text, unique=True, nullable=False)
+
+class OTP(db.Model):
+    __tablename__='otp'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    otp = db.Column(db.String(6), nullable=False)
+    email = db.Column(db.String(200), nullable=False)
+    expire_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    used = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())

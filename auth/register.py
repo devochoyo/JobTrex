@@ -114,7 +114,6 @@ def employer_reg(firstname, lastname, email, password, role, country,profile_pic
     email = email.strip()
     password = password.strip()
     country = country.strip()
-    profile_picture = profile_picture.strip()
     
     if not firstname:
         return jsonify({'message': 'Firstname cannot be empty'}), 400

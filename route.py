@@ -3,10 +3,12 @@ from flask_jwt_extended import jwt_required, get_jwt,get_jwt_identity
 from auth.register import applicant_reg,employer_reg
 from auth.login import user_login
 from auth.refresh import refresh_token
-#from auth.login import login
+from auth.send_otp import send_reset_email 
 from auth.logout import user_logout
-#from auth.refresh import refresh
-#from auth.verify import verify
+from auth.verify_otp import verify_otp
+from auth.reset_password import reset_password
+from employer.create_job import create_job
+from employer.jobs import employer_jobs
 
 
 register_bp = Blueprint('register', __name__)
@@ -14,13 +16,18 @@ login_bp = Blueprint('login', __name__)
 logout_bp = Blueprint('logout', __name__)
 refresh_bp = Blueprint('refresh', __name__)
 health_bp = Blueprint('health', __name__)
+forgotten_password_bp = Blueprint('forgotten_password',__name__)
+verify_bp = Blueprint('verify',__name__)
+reset_bp = Blueprint('reset', __name__)
+create_job_bp = Blueprint('create', __name__)
+employer_jobs_bp = Blueprint('employer_jobs', __name__)
 
 
 
 @health_bp.route('/health', methods=['GET'])
 def health():
     return jsonify({"message": "API is healthy"}), 200
-
+    
 
 
 @register_bp.route('/api/v1/register', methods=['POST'])
@@ -89,4 +96,54 @@ def refresh():
     return res
     
     
+
+@forgotten_password_bp.route("/api/v1/forgot-password", methods=["POST"])
+def forgot_pass():
+    email = request.get_json().get('email')
     
+    if not None:
+        res = send_reset_email(email)
+        return res
+    
+@verify_bp.route("/api/v1/verify", methods=["POST"])
+def verify():
+    otp = request.get_json().get('otp')
+    
+    if not None:
+        res = verify_otp(otp)
+        return res
+    
+
+@reset_bp.route("/api/v1/reset", methods=["POST"])
+def verify():
+    email = request.get_json().get('email')
+    password = request.get_json().get('password')
+    confirm_password = request.get_json().get("confirm_password")
+    
+    res = reset_password(email,password,confirm_password)
+    return res
+    
+    
+    
+@create_job_bp.route("/api/v1/post-job", methods=["POST"])
+@jwt_required()
+def post_job():
+    employer_id = get_jwt_identity()
+    title = request.form.get('title')
+    description = request.form.get('description')
+    location = request.form.get('location')
+    salary = request.form.get('salary')
+    picture = request.files.get('picture')
+    
+    res = create_job(title, description, location, salary, picture, employer_id)
+    
+    return res
+
+
+@employer_jobs_bp.route("/api/v1/my-jobs", methods=["GET"])
+@jwt_required()
+def emp_jobs():
+    employer_id = int(get_jwt_identity())
+    
+    res = employer_jobs(employer_id)
+    return res

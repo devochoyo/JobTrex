@@ -3,7 +3,7 @@ JobTrex is a job finder mobile application where employers post job and hire tho
 
 Register as an applicant
 
-/api/v1/register
+POST /api/v1/register
 
 {
     "firstname": "your firstname",
@@ -16,7 +16,7 @@ Register as an applicant
 
 Register as an employer
 
-/api/v1/register
+POST /api/v1/register
 
 {
     "firstname": "your firstname",
@@ -30,7 +30,7 @@ Register as an employer
 
 User Login
 
-/api/v1/login
+POST /api/v1/login
 
 {
   "email": "your email",
@@ -40,13 +40,18 @@ User Login
 
 User logout
 
-/api/v1/logout
+POST /api/v1/logout
 
 Authorization: Bearer #your refresh token
 
 
 Generating access token
 
-/api/v1/refresh
+POST /api/v1/refresh
 
 Authorization: Bearer #your refresh token
+
+Forgotten Password
+
+POST /api/v1/forgot-password
+

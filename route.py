@@ -171,6 +171,7 @@ def apply_job():
     
 
 @applicant_bp.route("/api/v1/applicants", methods=["GET"])
+@jwt_required()
 def get_applicants():
     
     job_id = request.args.get('job_id', type=int)

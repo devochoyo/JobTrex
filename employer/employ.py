@@ -1,5 +1,5 @@
 from flask import jsonify
-from model.model import Application
+from model.model import Application, JobStatus
 from extension import db
 
 def employ(job_id, applicant_id):
@@ -21,7 +21,7 @@ def employ(job_id, applicant_id):
     if job is None:
         return jsonify({"msg": "No Applicant Yet"}),400
     
-    job.status = Application.status='accepted'
+    job.status = JobStatus.ACCEPTED
     db.session.commit()
     return jsonify({"msg": "Successfully Employed"}), 200
 

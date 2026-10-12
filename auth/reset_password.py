@@ -19,13 +19,17 @@ def reset_password(email, password, confirm_password):
     otp_entry = (OTP.query.filter_by(email=email) .order_by(OTP.created_at.desc())
         .first()
             )
+    otp_status = False
     if otp_entry is not None:
-        
+
         otp_status = otp_entry.used
     if otp_status:
         hashed_pass = generate_password_hash(password=password)
-        user = User.query.filter_by(email=email)
-            
+        user = User.query.filter_by(email=email).first()
+
+        if user is None:
+            return jsonify({"message": "User not found"}),400
+
         user.password = hashed_pass
         db.session.commit()
             

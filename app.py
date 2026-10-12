@@ -11,7 +11,12 @@ from route import (register_bp,
                    forgotten_password_bp,
                    verify_bp,reset_bp,
                    create_job_bp,
-                   employer_jobs_bp
+                   employer_jobs_bp,
+                   apply_bp,
+                   applicant_bp,
+                   employ_bp,
+                   employed_bp
+
     
                    )
 
@@ -43,6 +48,10 @@ app.register_blueprint(verify_bp)
 app.register_blueprint(reset_bp)
 app.register_blueprint(create_job_bp)
 app.register_blueprint(employer_jobs_bp)
+app.register_blueprint(apply_bp)
+app.register_blueprint(applicant_bp)
+app.register_blueprint(employ_bp)
+app.register_blueprint(employed_bp)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')

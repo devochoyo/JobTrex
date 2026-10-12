@@ -22,6 +22,8 @@ def user_login(email, password):
        
     
     user = User.query.filter_by(email=email).first()
+    if user is None:
+        return jsonify({"msg": "Invalid Credentials"}),400
     role = user.role.value
     psw = user.password
     

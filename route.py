@@ -9,6 +9,10 @@ from auth.verify_otp import verify_otp
 from auth.reset_password import reset_password
 from employer.create_job import create_job
 from employer.jobs import employer_jobs
+from applicant.apply import apply
+from employer.applicants import applicants
+from employer.employ import employ
+from employer.employed import employed
 
 
 register_bp = Blueprint('register', __name__)
@@ -21,6 +25,10 @@ verify_bp = Blueprint('verify',__name__)
 reset_bp = Blueprint('reset', __name__)
 create_job_bp = Blueprint('create', __name__)
 employer_jobs_bp = Blueprint('employer_jobs', __name__)
+apply_bp = Blueprint('apply', __name__)
+applicant_bp = Blueprint('applicant', __name__)
+employ_bp = Blueprint('employ', __name__)
+employed_bp = Blueprint('employed', __name__)
 
 
 
@@ -146,4 +154,48 @@ def emp_jobs():
     employer_id = int(get_jwt_identity())
     
     res = employer_jobs(employer_id)
+    return res
+
+
+@apply_bp.route("/api/v1/apply", methods=["POST"])
+@jwt_required()
+def apply_job():
+    
+    data = request.get_json()
+    
+    job_id = data.get('job_id')
+    applicant_id = get_jwt_identity()
+    
+    res = apply(job_id, applicant_id)
+    return res
+    
+
+@applicant_bp.route("/api/v1/applicants", methods=["GET"])
+def get_applicants():
+    
+    job_id = request.args.get('job_id', type=int)
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    
+    res = applicants(job_id, page, per_page)
+    return res
+
+@employ_bp.route("/api/v1/employ", methods=["POST"])
+@jwt_required()
+def employ_user():
+    
+    job_id = request.get_json().get('job_id')
+    applicant_id = request.get_json().get('applicant_id')
+    
+    res = employ(job_id, applicant_id)
+    return res
+
+@employed_bp.route("/api/v1/employed", methods=["GET"])
+@jwt_required()
+def get_employed():
+    job_id = request.args.get('job_id', type=int)
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    
+    res = employed(job_id, page, per_page)
     return res

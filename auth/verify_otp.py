@@ -1,26 +1,39 @@
 from flask import jsonify
 from model.model import OTP
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from extension import db
 
-def verify_otp(otp):
+def verify_otp(otp, email=None):
     
     if not otp:
-        return jsonify({"message": "OTP is required"}), 400
+        return jsonify({"msg": "OTP is required"}), 400
     
-    otp_entry = OTP.query.filter_by(otp=otp).first()
+    otp = str(otp).strip()
+    now = datetime.now(timezone.utc)
     
-    if not otp_entry:
-        return jsonify({"message": "Invalid OTP"}), 400
+    entries = OTP.query.filter_by(otp=otp)
+    if email:
+        entries = entries.filter_by(email=str(email).strip())
+    entries = entries.order_by(OTP.created_at.desc()).all()
     
-    if datetime.now(timezone.utc) > otp_entry.expire_at:
-        return jsonify({"message": "OTP has expired"}), 400
+    if not entries:
+        return jsonify({"msg": "Invalid OTP"}), 400
     
-    if  otp_entry.used:
-        return jsonify({"message": "OTP has beed used"}), 400
+    otp_entry = None
+    for entry in entries:
+        if not entry.used and now <= entry.expire_at:
+            otp_entry = entry
+            break
+    
+    if otp_entry is None:
+        if all(entry.used for entry in entries):
+            return jsonify({"msg": "OTP has been used"}), 400
+        return jsonify({"msg": "OTP has expired"}), 400
         
     
     otp_entry.used = True
+    # the user has 5 minutes after verifying to reset the password
+    otp_entry.expire_at = now + timedelta(minutes=5)
     db.session.commit()
     
-    return jsonify({"status": True, "message": "OTP verified successfully"}), 200
+    return jsonify({"status": True, "msg": "OTP verified successfully"}), 200

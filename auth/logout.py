@@ -7,10 +7,10 @@ def user_logout(jti):
     if res:
         return jsonify({
             "status":True,
-            "message": "Logout Successful!"
+            "msg": "Logout Successful!"
         }),200
         
     return jsonify({
         'status': False,
-        "message": "Something went wrong"
+        "msg": "Something went wrong"
     }),500

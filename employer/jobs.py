@@ -13,6 +13,7 @@ def employer_jobs(employer_id):
     
     for job in jobs:
         jb = {
+            "id": job.id,
             "title": job.title,
             "description": job.description,
             "salary": job.salary,

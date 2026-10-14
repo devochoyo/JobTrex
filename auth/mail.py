@@ -3,8 +3,9 @@ from extension import mail
 from model.model import User
 def send_mail(subject, reciever, body):
     user = User.query.filter_by(email=reciever).first()
-    user_email = user.email
     
+    if user is None:
+        return False
     
     msg = Message(
         subject = subject,
@@ -12,8 +13,5 @@ def send_mail(subject, reciever, body):
         body=body
     )
     
-    if user_email:
-        mail.send(msg)
-        return True
-    
+    mail.send(msg)
     return True

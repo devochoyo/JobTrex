@@ -1,4 +1,5 @@
 from flask import Flask,send_from_directory
+from flask_jwt_extended import verify_jwt_in_request
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -15,9 +16,20 @@ from route import (register_bp,
                    apply_bp,
                    applicant_bp,
                    employ_bp,
-                   employed_bp
-
-    
+                   employed_bp,
+                   jobs_bp,
+                   job_details_bp,
+                   my_applications_bp,
+                   withdraw_bp,
+                   reject_bp,
+                   edit_job_bp,
+                   delete_job_bp,
+                   applicant_profile_bp,
+                   profile_bp,
+                   update_profile_bp,
+                   change_password_bp,
+                   send_verification_bp,
+                   verify_email_bp
                    )
 
 from flask_migrate import Migrate
@@ -31,6 +43,9 @@ migrate = Migrate(app, db)
 @app.route("/uploads/<path:filepath>")
 def get_file(filepath):
     folder = 'uploads'
+    
+    if filepath.startswith('cv/'):
+        verify_jwt_in_request()
     
     return send_from_directory(folder, filepath)
 
@@ -52,13 +67,30 @@ app.register_blueprint(apply_bp)
 app.register_blueprint(applicant_bp)
 app.register_blueprint(employ_bp)
 app.register_blueprint(employed_bp)
+app.register_blueprint(jobs_bp)
+app.register_blueprint(job_details_bp)
+app.register_blueprint(my_applications_bp)
+app.register_blueprint(withdraw_bp)
+app.register_blueprint(reject_bp)
+app.register_blueprint(edit_job_bp)
+app.register_blueprint(delete_job_bp)
+app.register_blueprint(applicant_profile_bp)
+app.register_blueprint(profile_bp)
+app.register_blueprint(update_profile_bp)
+app.register_blueprint(change_password_bp)
+app.register_blueprint(send_verification_bp)
+app.register_blueprint(verify_email_bp)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['UPLOAD_FOLDER'] =  'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
-app.config['ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
-app.config['REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
+
+if not app.config['SQLALCHEMY_DATABASE_URI'] or not app.config['JWT_SECRET_KEY']:
+    raise RuntimeError('DATABASE_URL and JWT_SECRET_KEY must be set in .env')
 
 #mail configuration
 app.config["MAIL_SERVER"] = os.getenv('MAIL_SERVER')

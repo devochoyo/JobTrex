@@ -4,7 +4,7 @@ from flask_jwt_extended import create_access_token
 
 def refresh_token(user_id):
     
-    user = User.query.get(user_id)
+    user = User.query.filter_by(id=user_id).first()
     if user is not None:
         access_token = create_access_token(identity= str(user.id))
         
@@ -12,6 +12,6 @@ def refresh_token(user_id):
             "access_token": access_token
         }),200
         
-    return jsonify({"message": "something went wrong"}),500
+    return jsonify({"msg": "something went wrong"}),500
     
     
